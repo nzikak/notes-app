@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "551204154466",
+    "project_id": "notes-app-flutter-proj",
+    "storage_bucket": "notes-app-flutter-proj.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:551204154466:android:b4e80b0fc6b2c895e9353b",
+        "android_client_info": {
+          "package_name": "com.thedynamicdev.notes_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "551204154466-dfjl7dlq0lrgu478u0170evbg1lskedd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5y_eNxcnO6rFu-R9qD8fZrEV10hiOXcQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "551204154466-dfjl7dlq0lrgu478u0170evbg1lskedd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
