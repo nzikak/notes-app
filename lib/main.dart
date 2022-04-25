@@ -31,7 +31,7 @@ void main() async {
         return const VerifyEmail();
       }
     },
-    initialRoute: "/login_view",
+    initialRoute: "/home",
   ));
 }
 
