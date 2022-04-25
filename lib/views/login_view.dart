@@ -64,7 +64,24 @@ class _LoginViewState extends State<LoginView> {
                   final password = _passwordTextController.text;
                   _loginUser(email, password);
                 },
-                child: const Text("Login"))
+                child: const Text("Login")),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Not yet registered?",
+                    style: TextStyle(fontSize: 16)),
+                const SizedBox(width: 5),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, "/register_view", (route) => false);
+                    },
+                    child: const Text(
+                      "Register here",
+                      style: TextStyle(fontSize: 16),
+                    ))
+              ],
+            )
           ],
         ),
       ),

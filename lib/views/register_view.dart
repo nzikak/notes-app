@@ -64,7 +64,24 @@ class _RegisterViewState extends State<RegisterView> {
                   final password = _passwordTextController.text;
                   _createNewUser(email, password);
                 },
-                child: const Text("Register"))
+                child: const Text("Register")),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Already registered?",
+                    style: TextStyle(fontSize: 16)),
+                const SizedBox(width: 5),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, "/login_view", (route) => false);
+                    },
+                    child: const Text(
+                      "Sign In",
+                      style: TextStyle(fontSize: 16),
+                    ))
+              ],
+            )
           ],
         ),
       ),
