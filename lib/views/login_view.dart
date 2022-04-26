@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:developer' as devtools show log;
 
 import 'package:notes_app/constants/routes.dart';
+
+import '../utils/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -103,9 +104,19 @@ class _LoginViewState extends State<LoginView> {
         (route) => false,
       );
     } on FirebaseAuthException catch (e) {
-      devtools.log("Error occurred while signing in. ${e.message}");
+      switch(e.code) {
+        case "user-not-found":
+          await showErrorDialog(context, "User does not exist");
+          break;
+        case "wrong-password":
+          await showErrorDialog(context, "Invalid password");
+          break;
+        default:
+          await showErrorDialog(context, "Error: ${e.message}");
+      }
     } catch (e) {
-      devtools.log("Error occurred");
+      await showErrorDialog(context, e.toString());
     }
   }
 }
+
