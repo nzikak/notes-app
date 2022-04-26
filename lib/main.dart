@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:notes_app/views/home_page.dart';
 import 'package:notes_app/views/login_view.dart';
+import 'package:notes_app/views/notes_view.dart';
 import 'package:notes_app/views/register_view.dart';
 import 'package:notes_app/views/verify_email_view.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MaterialApp(
     title: 'Notes App',
     debugShowCheckedModeBanner: false,
@@ -29,9 +28,9 @@ void main() async {
       },
       "verify_email": (context) {
         return const VerifyEmail();
-      }
+      },
+      "/notes": (context) => const NotesView()
     },
     initialRoute: "/home",
   ));
 }
-
