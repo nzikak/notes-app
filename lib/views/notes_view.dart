@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:notes_app/constants/routes.dart';
+import 'package:notes_app/utils/sign_out_user.dart';
 
 enum MenuAction { logout }
 
@@ -34,7 +35,7 @@ class _NotesViewState extends State<NotesView> {
                 case MenuAction.logout:
                   final shouldLogout = await _showLogoutDialog(context);
                   if (shouldLogout) {
-                    _signOutUser(context);
+                    signOutUser(context, loginRoute);
                   }
                   break;
               }
@@ -47,14 +48,6 @@ class _NotesViewState extends State<NotesView> {
     );
   }
 
-  void _signOutUser(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      loginRoute,
-      (route) => false,
-    );
-  }
 
   Future<bool> _showLogoutDialog(BuildContext context) {
     return showDialog<bool>(

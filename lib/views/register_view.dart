@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:developer' as devtools show log;
-
 import 'package:notes_app/constants/routes.dart';
+import 'package:notes_app/utils/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);
@@ -65,7 +64,7 @@ class _RegisterViewState extends State<RegisterView> {
                 onPressed: () {
                   final email = _emailTextController.text;
                   final password = _passwordTextController.text;
-                  _createNewUser(email, password);
+                  _createNewUser(context, email, password);
                 },
                 child: const Text("Register")),
             Row(
@@ -94,13 +93,32 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 
-  void _createNewUser(String email, String password) async {
+  void _createNewUser(
+      BuildContext context, String email, String password) async {
     try {
-      final userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(email: email, password: password);
-      (userCredential);
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+      Navigator.of(context).pushNamed(verifyEmailRoute);
     } on FirebaseAuthException catch (e) {
-      devtools.log(e.message ?? "");
+      switch (e.code) {
+        case "weak-password":
+          await showErrorDialog(context, "Weak password");
+          break;
+        case "email-already-in-use":
+          await showErrorDialog(context, "Account already exists");
+          break;
+        case "invalid-email":
+          await showErrorDialog(context, "Invalid email");
+          break;
+        default:
+          await showErrorDialog(context, "Error: ${e.message}");
+      }
+    } catch (e) {
+      await showErrorDialog(context, e.toString());
     }
   }
+
 }
