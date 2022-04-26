@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:notes_app/constants/routes.dart';
 import 'package:notes_app/views/home_page.dart';
 import 'package:notes_app/views/login_view.dart';
 import 'package:notes_app/views/notes_view.dart';
@@ -17,20 +18,20 @@ void main() async {
       primarySwatch: Colors.blue,
     ),
     routes: {
-      "/home": (context) {
+      homeRoute: (context) {
         return const HomePage();
       },
-      "/login_view": (context) {
+      loginRoute: (context) {
         return const LoginView();
       },
-      "/register_view": (context) {
+      registerRoute: (context) {
         return const RegisterView();
       },
-      "verify_email": (context) {
+      verifyEmailRoute: (context) {
         return const VerifyEmail();
       },
-      "/notes": (context) => const NotesView()
+      notesRoute: (context) => const NotesView()
     },
-    initialRoute: "/home",
+    initialRoute: homeRoute,
   ));
 }
