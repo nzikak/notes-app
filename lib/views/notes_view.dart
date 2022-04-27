@@ -1,11 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as devtools show log;
-
 import 'package:notes_app/constants/routes.dart';
 import 'package:notes_app/utils/sign_out_user.dart';
-
-enum MenuAction { logout }
+import '../enums/menu_action.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
@@ -47,7 +43,6 @@ class _NotesViewState extends State<NotesView> {
       body: ListView(),
     );
   }
-
 
   Future<bool> _showLogoutDialog(BuildContext context) {
     return showDialog<bool>(

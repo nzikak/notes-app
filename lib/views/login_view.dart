@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:notes_app/constants/routes.dart';
-
+import 'package:notes_app/services/auth/auth_exceptions.dart';
+import 'package:notes_app/services/auth/auth_service.dart';
 import '../utils/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -97,27 +96,19 @@ class _LoginViewState extends State<LoginView> {
 
   void _loginUser(BuildContext context, String email, String password) async {
     try {
-      final userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      final isEmailVerified = userCredential.user?.emailVerified ?? false;
+      final user = await AuthService.firebase()
+          .loginUser(email: email, password: password);
 
       Navigator.of(context).pushNamedAndRemoveUntil(
-        isEmailVerified ? notesRoute : verifyEmailRoute,
+        user.isEmailVerified ? notesRoute : verifyEmailRoute,
         (route) => false,
       );
-    } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case "user-not-found":
-          await showErrorDialog(context, "User does not exist");
-          break;
-        case "wrong-password":
-          await showErrorDialog(context, "Invalid password");
-          break;
-        default:
-          await showErrorDialog(context, "Error: ${e.message}");
-      }
-    } catch (e) {
-      await showErrorDialog(context, e.toString());
+    } on UserNotFoundAuthException {
+      await showErrorDialog(context, "User does not exist");
+    } on WrongPasswordAuthException {
+      await showErrorDialog(context, "Incorrect password");
+    } on GenericAuthException {
+      await showErrorDialog(context, "Authentication error");
     }
   }
 }

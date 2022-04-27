@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notes_app/constants/routes.dart';
+import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/utils/sign_out_user.dart';
 
 class VerifyEmail extends StatefulWidget {
@@ -66,6 +66,6 @@ class _VerifyEmailState extends State<VerifyEmail> {
   }
 
   void _sendEmailVerification() async {
-    await FirebaseAuth.instance.currentUser?.sendEmailVerification();
+    await AuthService.firebase().sendEmailVerification();
   }
 }
