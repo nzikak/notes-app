@@ -97,14 +97,16 @@ class _LoginViewState extends State<LoginView> {
 
   void _loginUser(BuildContext context, String email, String password) async {
     try {
-      await FirebaseAuth.instance
+      final userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      final isEmailVerified = userCredential.user?.emailVerified ?? false;
+
       Navigator.of(context).pushNamedAndRemoveUntil(
-        notesRoute,
+        isEmailVerified ? notesRoute : verifyEmailRoute,
         (route) => false,
       );
     } on FirebaseAuthException catch (e) {
-      switch(e.code) {
+      switch (e.code) {
         case "user-not-found":
           await showErrorDialog(context, "User does not exist");
           break;
@@ -119,4 +121,3 @@ class _LoginViewState extends State<LoginView> {
     }
   }
 }
-
