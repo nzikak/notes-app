@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:notes_app/services/auth/auth_exceptions.dart';
 import 'package:notes_app/services/local/db_exceptions.dart';
 import 'package:notes_app/services/local/note_entity.dart';
@@ -28,6 +30,27 @@ const createUserTable = '''CREATE TABLE IF NOT EXIST "users" (
 class NoteService {
   Database? _db;
 
+  List<Note> _notes = List.empty();
+  final _notesStreamController = StreamController<List<Note>>.broadcast();
+
+  Future<UserEntity> getOrCreateUser({required String email}) async {
+    try {
+      final fetchedUser = await getUser(email: email);
+      return fetchedUser;
+    } on CouldNotFindUserException {
+      final createdUser = await createUser(email: email);
+      return createdUser;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> _cacheNotes() async {
+    final notes = await getAllNotes();
+    _notes = notes;
+    _notesStreamController.add(_notes);
+  }
+
   Future<void> openDb() async {
     if (_db != null) {
       throw DatabaseAlreadyOpenException();
@@ -44,6 +67,8 @@ class NoteService {
 
       //Create Notes table
       await db.execute(createNoteTable);
+
+      await _cacheNotes();
     } on MissingPlatformDirectoryException {
       throw UnableToGetDocumentDirectoryException();
     }
@@ -88,7 +113,7 @@ class NoteService {
     }
 
     final userId =
-    await db.insert(usersTable, {emailColumn: email.toLowerCase()});
+        await db.insert(usersTable, {emailColumn: email.toLowerCase()});
 
     return UserEntity(id: userId, email: email);
   }
@@ -129,7 +154,11 @@ class NoteService {
       },
     );
 
-    return Note(true, id: noteId, content: content, userId: owner.id!);
+    final note = Note(true, id: noteId, content: content, userId: owner.id!);
+
+    _notes.add(note);
+    _notesStreamController.add(_notes);
+    return note;
   }
 
   Future<void> deleteNote({required int noteId}) async {
@@ -140,11 +169,17 @@ class NoteService {
     if (deletedNoteCount == 0) {
       throw CouldNotDeleteNoteException();
     }
+    _notes.removeWhere((note) => note.id == noteId);
+    _notesStreamController.add(_notes);
   }
 
   Future<int> deleteAllNotes() async {
     final db = _getDatabaseOrThrow();
-    return db.delete(notesTable);
+    final deletedNotesCount = await db.delete(notesTable);
+
+    _notes.clear();
+    _notesStreamController.add(_notes);
+    return deletedNotesCount;
   }
 
   Future<Note> getNote({required int noteId}) async {
@@ -161,16 +196,19 @@ class NoteService {
       throw CouldNotFindNoteException();
     }
 
-    return Note.fromRow(result.first);
+    final note = Note.fromRow(result.first);
+    _notes.removeWhere((note) => note.id == noteId);
+    _notes.add(note);
+    _notesStreamController.add(_notes);
+    return note;
   }
 
   Future<List<Note>> getAllNotes() async {
     final db = _getDatabaseOrThrow();
     final result = await db.query(notesTable);
-    final notes = List<Note>.empty(growable: true);
-    for (var element in result) {
-      notes.add(Note.fromRow(element));
-    }
+
+    final notes = result.map((item) => Note.fromRow(item)).toList();
+
     return notes;
   }
 
@@ -183,16 +221,10 @@ class NoteService {
     await getNote(noteId: note.id!);
 
     final count = await db.update(
-      notesTable,
-      {
-        contentColumn: content,
-        isSyncedColumn: 0
-      },
-      where: "$noteIdColumn = ?",
-      whereArgs: [note.id]
-    );
+        notesTable, {contentColumn: content, isSyncedColumn: 0},
+        where: "$noteIdColumn = ?", whereArgs: [note.id]);
 
-    if(count == 0) {
+    if (count == 0) {
       throw CouldNotUpdateNoteException();
     }
 
