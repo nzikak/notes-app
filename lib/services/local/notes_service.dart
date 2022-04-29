@@ -21,7 +21,7 @@ const createNoteTable = '''
         PRIMARY KEY("id" AUTOINCREMENT),
         FOREIGN KEY("user_id") REFERENCES "user"("id")
       );''';
-const createUserTable = '''CREATE TABLE IF NOT EXIST "users" (
+const createUserTable = '''CREATE TABLE IF NOT EXISTS "users" (
             "id"	INTEGER NOT NULL,
             "email"	TEXT NOT NULL UNIQUE,
             PRIMARY KEY("id" AUTOINCREMENT)
