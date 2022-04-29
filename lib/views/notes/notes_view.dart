@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/constants/routes.dart';
 import 'package:notes_app/services/auth/auth_service.dart';
+import 'package:notes_app/services/local/note_entity.dart';
 import 'package:notes_app/services/local/notes_service.dart';
 import 'package:notes_app/utils/sign_out_user.dart';
 import '../../enums/menu_action.dart';
@@ -21,12 +22,6 @@ class _NotesViewState extends State<NotesView> {
     _noteService = NoteService();
     _noteService.openDb();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _noteService.closeDb();
-    super.dispose();
   }
 
   @override
@@ -75,7 +70,31 @@ class _NotesViewState extends State<NotesView> {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
                       case ConnectionState.active:
-                        return const Text("Waiting for all notes");
+                        if (snapshot.hasData) {
+                          final notes = snapshot.data as List<Note>;
+                          return ListView.separated(
+                              itemBuilder: (context, index) {
+                                final note = notes[index];
+                                return ListTile(
+                                  title: Text(
+                                    note.content,
+                                    maxLines: 2,
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                if (index != notes.length - 1) {
+                                  return const Divider(thickness: 1);
+                                } else {
+                                  return const SizedBox.shrink();
+                                }
+                              },
+                              itemCount: notes.length);
+                        } else {
+                          return const CircularProgressIndicator();
+                        }
                       default:
                         return const CircularProgressIndicator();
                     }

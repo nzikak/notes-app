@@ -13,7 +13,7 @@ const usersTable = "users";
 const dbName = "notes.db";
 const dbVersion = 1;
 const createNoteTable = '''
-            CREATE TABLE "notes" (
+            CREATE TABLE IF NOT EXISTS "notes" (
         "id"	INTEGER NOT NULL,
         "user_id"	INTEGER NOT NULL,
         "content"	TEXT NOT NULL,
@@ -31,12 +31,17 @@ class NoteService {
   Database? _db;
 
   List<Note> _notes = List.empty();
-  final _notesStreamController = StreamController<List<Note>>.broadcast();
+  late final StreamController<List<Note>> _notesStreamController;
 
 
   static final NoteService _shared = NoteService._sharedInstance();
 
-  NoteService._sharedInstance();
+  NoteService._sharedInstance() {
+    _notesStreamController = StreamController<List<Note>>
+        .broadcast(onListen: () {
+          _notesStreamController.sink.add(_notes);
+    });
+  }
 
   factory NoteService() => _shared;
 
