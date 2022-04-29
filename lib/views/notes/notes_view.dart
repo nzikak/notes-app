@@ -3,7 +3,7 @@ import 'package:notes_app/constants/routes.dart';
 import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/services/local/notes_service.dart';
 import 'package:notes_app/utils/sign_out_user.dart';
-import '../enums/menu_action.dart';
+import '../../enums/menu_action.dart';
 
 class NotesView extends StatefulWidget {
   const NotesView({Key? key}) : super(key: key);
@@ -38,6 +38,12 @@ class _NotesViewState extends State<NotesView> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
+          IconButton(
+            onPressed: () {
+              _navigateToNewNoteView(context);
+            },
+            icon: const Icon(Icons.add_circle),
+          ),
           PopupMenuButton<MenuAction>(
             itemBuilder: (context) {
               return const [
@@ -101,5 +107,9 @@ class _NotesViewState extends State<NotesView> {
                     child: const Text("Yes"))
               ]);
         }).then((value) => value ?? false);
+  }
+
+  void _navigateToNewNoteView(BuildContext context) {
+    Navigator.of(context).pushNamed(newNotesRoute);
   }
 }

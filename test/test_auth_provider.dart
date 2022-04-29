@@ -36,7 +36,7 @@ class TestAuthProvider implements AuthProvider {
   @override
   Future<void> logOutUser() async {
     if (!isInitialized) throw NotInitializedException();
-    if(_user == null) throw UserNotLoggedInException();
+    if (_user == null) throw UserNotLoggedInException();
 
     await Future.delayed(const Duration(seconds: 2));
     _user = null;
@@ -51,7 +51,10 @@ class TestAuthProvider implements AuthProvider {
     if (email == "foo@bar.com") throw UserNotFoundAuthException();
     if (password == "foobar") throw WrongPasswordAuthException();
 
-    const user = AuthUser(isEmailVerified: false);
+    final user = AuthUser(
+      email: email,
+      isEmailVerified: false,
+    );
     _user = user;
     return Future.value(user);
   }
@@ -59,7 +62,10 @@ class TestAuthProvider implements AuthProvider {
   @override
   Future<void> sendEmailVerification() async {
     if (!isInitialized) throw NotInitializedException();
-    if(_user == null) throw UserNotLoggedInException();
-    _user = const AuthUser(isEmailVerified: true);
+    if (_user == null) throw UserNotLoggedInException();
+    _user = const AuthUser(
+      email: null,
+      isEmailVerified: true,
+    );
   }
 }
