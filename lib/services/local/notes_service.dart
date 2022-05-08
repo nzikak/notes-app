@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:notes_app/extensions/list/filter.dart';
 import 'package:notes_app/services/auth/auth_exceptions.dart';
 import 'package:notes_app/services/local/db_exceptions.dart';
 import 'package:notes_app/services/local/note_entity.dart';
@@ -33,26 +34,43 @@ class NoteService {
   List<Note> _notes = List.empty();
   late final StreamController<List<Note>> _notesStreamController;
 
+  UserEntity? _currentUser;
 
   static final NoteService _shared = NoteService._sharedInstance();
 
   NoteService._sharedInstance() {
-    _notesStreamController = StreamController<List<Note>>
-        .broadcast(onListen: () {
-          _notesStreamController.sink.add(_notes);
+    _notesStreamController =
+        StreamController<List<Note>>.broadcast(onListen: () {
+      _notesStreamController.sink.add(_notes);
     });
   }
 
   factory NoteService() => _shared;
 
-  Stream<List<Note>> get allNotes => _notesStreamController.stream;
+  Stream<List<Note>> get allNotes =>
+      _notesStreamController.stream.filter((note) {
+        final user = _currentUser;
+        if (user == null) {
+          throw SetUserBeforeReadingNotesException();
+        }
+        return note.userId == user.id;
+      });
 
-  Future<UserEntity> getOrCreateUser({required String email}) async {
+  Future<UserEntity> getOrCreateUser(
+      {required String email, bool setAsCurrentUser = true}) async {
     try {
       final fetchedUser = await getUser(email: email);
+
+      if (setAsCurrentUser) {
+        _currentUser = fetchedUser;
+      }
       return fetchedUser;
     } on CouldNotFindUserException {
       final createdUser = await createUser(email: email);
+
+      if (setAsCurrentUser) {
+        _currentUser = createdUser;
+      }
       return createdUser;
     } catch (e) {
       rethrow;
