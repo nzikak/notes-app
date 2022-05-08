@@ -37,7 +37,7 @@ class _NotesViewState extends State<NotesView> {
         actions: [
           IconButton(
             onPressed: () {
-              _navigateToNewNoteView(context);
+              _navigateToCreateUpdateNoteView(context);
             },
             icon: const Icon(Icons.add_circle),
           ),
@@ -79,6 +79,12 @@ class _NotesViewState extends State<NotesView> {
                             onDeleteNote: (note) async {
                               await _noteService.deleteNote(noteId: note.id!);
                             },
+                            onNavigateToCreateUpdateNote: (note) {
+                              _navigateToCreateUpdateNoteView(
+                                context,
+                                note: note,
+                              );
+                            },
                           );
                         } else {
                           return const CircularProgressIndicator();
@@ -95,7 +101,10 @@ class _NotesViewState extends State<NotesView> {
     );
   }
 
-  void _navigateToNewNoteView(BuildContext context) {
-    Navigator.of(context).pushNamed(newNotesRoute);
+  void _navigateToCreateUpdateNoteView(BuildContext context, {Note? note}) {
+    Navigator.of(context).pushNamed(
+      createUpdateNoteRoute,
+      arguments: note,
+    );
   }
 }

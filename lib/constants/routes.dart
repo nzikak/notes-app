@@ -6,4 +6,4 @@ const registerRoute = "/register";
 const notesRoute = "/notes";
 const homeRoute = "/home";
 const verifyEmailRoute = "/verify_email";
-const newNotesRoute = "/new_notes";
+const createUpdateNoteRoute = "/new_notes";

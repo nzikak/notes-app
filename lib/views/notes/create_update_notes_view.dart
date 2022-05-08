@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/services/local/note_entity.dart';
 import 'package:notes_app/services/local/notes_service.dart';
+import 'package:notes_app/utils/generics/get_arguments.dart';
 
-class NewNotesView extends StatefulWidget {
-  const NewNotesView({Key? key}) : super(key: key);
+class CreateUpdateNotesView extends StatefulWidget {
+  const CreateUpdateNotesView({Key? key}) : super(key: key);
 
   @override
-  State<NewNotesView> createState() => _NewNotesViewState();
+  State<CreateUpdateNotesView> createState() => _CreateUpdateNotesViewState();
 }
 
-class _NewNotesViewState extends State<NewNotesView> {
+class _CreateUpdateNotesViewState extends State<CreateUpdateNotesView> {
   Note? _note;
   late final NoteService _noteService;
   late final TextEditingController _noteController;
@@ -40,7 +41,14 @@ class _NewNotesViewState extends State<NewNotesView> {
     _noteController.addListener(_noteControllerListener);
   }
 
-  Future<Note> _createNewNote() async {
+  Future<Note> _createOrGetExistingNote(BuildContext context) async {
+    final noteArg = context.getArguments<Note>();
+    if (noteArg != null) {
+      _note = noteArg;
+      _noteController.text = noteArg.content;
+      return noteArg;
+    }
+
     final currentNote = _note;
     if (currentNote != null) {
       return currentNote;
@@ -48,7 +56,9 @@ class _NewNotesViewState extends State<NewNotesView> {
     final currentUser = AuthService.firebase().currentUser!;
     final noteOwner = await _noteService.getUser(email: currentUser.email!);
 
-    return await _noteService.createNote(owner: noteOwner);
+    final newNote = await _noteService.createNote(owner: noteOwner);
+    _note = newNote;
+    return newNote;
   }
 
   void _deleteNoteIfTextIsEmpty() {
@@ -80,17 +90,17 @@ class _NewNotesViewState extends State<NewNotesView> {
 
   @override
   Widget build(BuildContext context) {
+    final noteArg = context.getArguments<Note>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("New Note"),
+        title: Text((noteArg == null) ? "New Note" : "Update Note"),
         centerTitle: true,
       ),
       body: FutureBuilder(
-        future: _createNewNote(),
+        future: _createOrGetExistingNote(context),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              _note = snapshot.data as Note;
               _setUpNoteControllerListener();
               return Container(
                 padding: const EdgeInsets.all(10),

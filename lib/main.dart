@@ -3,8 +3,8 @@ import 'package:notes_app/constants/routes.dart';
 import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/views/home_page.dart';
 import 'package:notes_app/views/login_view.dart';
-import 'package:notes_app/views/notes/new_notes_view.dart';
-import 'package:notes_app/views/notes/notes_view.dart';
+import 'package:notes_app/views/notes/create_update_notes_view.dart';
+import 'package:notes_app/views/notes/note_view.dart';
 import 'package:notes_app/views/register_view.dart';
 import 'package:notes_app/views/verify_email_view.dart';
 
@@ -31,7 +31,7 @@ void main() async {
         return const VerifyEmail();
       },
       notesRoute: (context) => const NotesView(),
-      newNotesRoute: (context) => const NewNotesView()
+      createUpdateNoteRoute: (context) => const CreateUpdateNotesView()
     },
     initialRoute: homeRoute,
   ));
