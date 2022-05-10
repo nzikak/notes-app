@@ -1,9 +1,7 @@
 import 'dart:async';
-
 import 'package:notes_app/extensions/list/filter.dart';
-import 'package:notes_app/services/auth/auth_exceptions.dart';
 import 'package:notes_app/services/local/db_exceptions.dart';
-import 'package:notes_app/services/local/note_entity.dart';
+import 'package:notes_app/services/local/local_note_entity.dart';
 import 'package:notes_app/services/local/user_entity.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -31,8 +29,8 @@ const createUserTable = '''CREATE TABLE IF NOT EXISTS "users" (
 class NoteService {
   Database? _db;
 
-  List<Note> _notes = List.empty();
-  late final StreamController<List<Note>> _notesStreamController;
+  List<LocalNote> _notes = List.empty();
+  late final StreamController<List<LocalNote>> _notesStreamController;
 
   UserEntity? _currentUser;
 
@@ -40,14 +38,14 @@ class NoteService {
 
   NoteService._sharedInstance() {
     _notesStreamController =
-        StreamController<List<Note>>.broadcast(onListen: () {
+        StreamController<List<LocalNote>>.broadcast(onListen: () {
       _notesStreamController.sink.add(_notes);
     });
   }
 
   factory NoteService() => _shared;
 
-  Stream<List<Note>> get allNotes =>
+  Stream<List<LocalNote>> get allNotes =>
       _notesStreamController.stream.filter((note) {
         final user = _currentUser;
         if (user == null) {
@@ -177,7 +175,7 @@ class NoteService {
     return UserEntity.fromRow(result.first);
   }
 
-  Future<Note> createNote({required UserEntity owner}) async {
+  Future<LocalNote> createNote({required UserEntity owner}) async {
     await _ensureDbIsOpened();
     final db = _getDatabaseOrThrow();
 
@@ -197,7 +195,7 @@ class NoteService {
       },
     );
 
-    final note = Note(true, id: noteId, content: content, userId: owner.id!);
+    final note = LocalNote(true, id: noteId, content: content, userId: owner.id!);
 
     _notes.add(note);
     _notesStreamController.add(_notes);
@@ -227,7 +225,7 @@ class NoteService {
     return deletedNotesCount;
   }
 
-  Future<Note> getNote({required int noteId}) async {
+  Future<LocalNote> getNote({required int noteId}) async {
     await _ensureDbIsOpened();
     final db = _getDatabaseOrThrow();
 
@@ -242,25 +240,25 @@ class NoteService {
       throw CouldNotFindNoteException();
     }
 
-    final note = Note.fromRow(result.first);
+    final note = LocalNote.fromRow(result.first);
     _notes.removeWhere((note) => note.id == noteId);
     _notes.add(note);
     _notesStreamController.add(_notes);
     return note;
   }
 
-  Future<List<Note>> getAllNotes() async {
+  Future<List<LocalNote>> getAllNotes() async {
     await _ensureDbIsOpened();
     final db = _getDatabaseOrThrow();
     final result = await db.query(notesTable);
 
-    final notes = result.map((item) => Note.fromRow(item)).toList();
+    final notes = result.map((item) => LocalNote.fromRow(item)).toList();
 
     return notes;
   }
 
-  Future<Note> updateNote({
-    required Note note,
+  Future<LocalNote> updateNote({
+    required LocalNote note,
     required String content,
   }) async {
     await _ensureDbIsOpened();

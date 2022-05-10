@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/constants/routes.dart';
 import 'package:notes_app/services/auth/auth_service.dart';
-import 'package:notes_app/services/local/note_entity.dart';
+import 'package:notes_app/services/local/local_note_entity.dart';
 import 'package:notes_app/services/local/notes_service.dart';
 import 'package:notes_app/utils/sign_out_user.dart';
 import 'package:notes_app/views/notes/notes_list_view.dart';
@@ -16,7 +16,7 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
-  String get _userEmail => AuthService.firebase().currentUser!.email!;
+  String get _userEmail => AuthService.firebase().currentUser!.email;
   late final NoteService _noteService;
 
   @override
@@ -73,7 +73,7 @@ class _NotesViewState extends State<NotesView> {
                       case ConnectionState.waiting:
                       case ConnectionState.active:
                         if (snapshot.hasData) {
-                          final notes = snapshot.data as List<Note>;
+                          final notes = snapshot.data as List<LocalNote>;
                           return NoteListView(
                             notes: notes,
                             onDeleteNote: (note) async {
@@ -101,7 +101,7 @@ class _NotesViewState extends State<NotesView> {
     );
   }
 
-  void _navigateToCreateUpdateNoteView(BuildContext context, {Note? note}) {
+  void _navigateToCreateUpdateNoteView(BuildContext context, {LocalNote? note}) {
     Navigator.of(context).pushNamed(
       createUpdateNoteRoute,
       arguments: note,

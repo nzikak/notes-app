@@ -54,6 +54,7 @@ class TestAuthProvider implements AuthProvider {
     final user = AuthUser(
       email: email,
       isEmailVerified: false,
+      id: "userId",
     );
     _user = user;
     return Future.value(user);
@@ -64,8 +65,9 @@ class TestAuthProvider implements AuthProvider {
     if (!isInitialized) throw NotInitializedException();
     if (_user == null) throw UserNotLoggedInException();
     _user = const AuthUser(
-      email: null,
+      email: "email",
       isEmailVerified: true,
+      id: "userId",
     );
   }
 }

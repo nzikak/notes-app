@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/extensions/generics/get_arguments.dart';
 import 'package:notes_app/services/auth/auth_service.dart';
-import 'package:notes_app/services/local/note_entity.dart';
+import 'package:notes_app/services/local/local_note_entity.dart';
 import 'package:notes_app/services/local/notes_service.dart';
 
 class CreateUpdateNotesView extends StatefulWidget {
@@ -12,7 +12,7 @@ class CreateUpdateNotesView extends StatefulWidget {
 }
 
 class _CreateUpdateNotesViewState extends State<CreateUpdateNotesView> {
-  Note? _note;
+  LocalNote? _note;
   late final NoteService _noteService;
   late final TextEditingController _noteController;
 
@@ -41,8 +41,8 @@ class _CreateUpdateNotesViewState extends State<CreateUpdateNotesView> {
     _noteController.addListener(_noteControllerListener);
   }
 
-  Future<Note> _createOrGetExistingNote(BuildContext context) async {
-    final noteArg = context.getArguments<Note>();
+  Future<LocalNote> _createOrGetExistingNote(BuildContext context) async {
+    final noteArg = context.getArguments<LocalNote>();
     if (noteArg != null) {
       _note = noteArg;
       _noteController.text = noteArg.content;
@@ -54,7 +54,7 @@ class _CreateUpdateNotesViewState extends State<CreateUpdateNotesView> {
       return currentNote;
     }
     final currentUser = AuthService.firebase().currentUser!;
-    final noteOwner = await _noteService.getUser(email: currentUser.email!);
+    final noteOwner = await _noteService.getUser(email: currentUser.email);
 
     final newNote = await _noteService.createNote(owner: noteOwner);
     _note = newNote;
@@ -90,7 +90,7 @@ class _CreateUpdateNotesViewState extends State<CreateUpdateNotesView> {
 
   @override
   Widget build(BuildContext context) {
-    final noteArg = context.getArguments<Note>();
+    final noteArg = context.getArguments<LocalNote>();
     return Scaffold(
       appBar: AppBar(
         title: Text((noteArg == null) ? "New Note" : "Update Note"),

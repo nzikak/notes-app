@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/services/local/note_entity.dart';
+import 'package:notes_app/services/local/local_note_entity.dart';
 
 import '../../utils/dialogs/delete_dialog.dart';
 
-typedef NoteCallback = void Function(Note note);
+typedef NoteCallback = void Function(LocalNote note);
 
 class NoteListView extends StatelessWidget {
-  final List<Note> notes;
+  final List<LocalNote> notes;
   final NoteCallback onDeleteNote;
   final NoteCallback onNavigateToCreateUpdateNote;
 
