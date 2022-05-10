@@ -8,7 +8,7 @@ class CloudNote {
   final String documentId;
   final String content;
 
-  const CloudNote._({
+  const CloudNote({
     required this.ownerUserId,
     required this.documentId,
     required this.content,

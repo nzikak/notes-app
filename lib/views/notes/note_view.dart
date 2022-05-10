@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/constants/routes.dart';
 import 'package:notes_app/services/auth/auth_service.dart';
-import 'package:notes_app/services/local/local_note_entity.dart';
-import 'package:notes_app/services/local/notes_service.dart';
+import 'package:notes_app/services/cloud/cloud_note_entity.dart';
+import 'package:notes_app/services/cloud/cloud_storage_service.dart';
 import 'package:notes_app/utils/sign_out_user.dart';
 import 'package:notes_app/views/notes/notes_list_view.dart';
 import '../../enums/menu_action.dart';
@@ -16,13 +16,13 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
-  String get _userEmail => AuthService.firebase().currentUser!.email;
-  late final NoteService _noteService;
+  String get _userId => AuthService.firebase().currentUser!.id;
+  late final FirebaseCloudStorage _noteService;
 
   @override
   void initState() {
-    _noteService = NoteService();
-    _noteService.openDb();
+    _noteService = FirebaseCloudStorage();
+    // _noteService.openDb();
     super.initState();
   }
 
@@ -61,47 +61,45 @@ class _NotesViewState extends State<NotesView> {
         ],
         centerTitle: true,
       ),
-      body: FutureBuilder(
-          future: _noteService.getOrCreateUser(email: _userEmail),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                return StreamBuilder(
-                  stream: _noteService.allNotes,
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                      case ConnectionState.active:
-                        if (snapshot.hasData) {
-                          final notes = snapshot.data as List<LocalNote>;
-                          return NoteListView(
-                            notes: notes,
-                            onDeleteNote: (note) async {
-                              await _noteService.deleteNote(noteId: note.id!);
-                            },
-                            onNavigateToCreateUpdateNote: (note) {
-                              _navigateToCreateUpdateNoteView(
-                                context,
-                                note: note,
-                              );
-                            },
-                          );
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      default:
-                        return const CircularProgressIndicator();
-                    }
+      body: StreamBuilder(
+        stream: _noteService.allNotes(ownerUserId: _userId),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+            case ConnectionState.active:
+              if (snapshot.hasData) {
+                final notes = snapshot.data as Iterable<CloudNote>;
+                return NoteListView(
+                  notes: notes,
+                  onDeleteNote: (note) async {
+                    await _noteService.deleteNote(documentId: note.documentId);
+                  },
+                  onNavigateToCreateUpdateNote: (note) {
+                    _navigateToCreateUpdateNoteView(
+                      context,
+                      note: note,
+                    );
                   },
                 );
-              default:
-                return const CircularProgressIndicator();
-            }
-          }),
+              } else {
+                return Container(
+                  alignment: Alignment.center,
+                  child: const CircularProgressIndicator(),
+                );
+              }
+            default:
+              return Container(
+                alignment: Alignment.center,
+                child: const CircularProgressIndicator(),
+              );
+          }
+        },
+      ),
     );
   }
 
-  void _navigateToCreateUpdateNoteView(BuildContext context, {LocalNote? note}) {
+  void _navigateToCreateUpdateNoteView(BuildContext context,
+      {CloudNote? note}) {
     Navigator.of(context).pushNamed(
       createUpdateNoteRoute,
       arguments: note,

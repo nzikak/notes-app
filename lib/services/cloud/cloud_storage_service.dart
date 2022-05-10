@@ -14,11 +14,19 @@ class FirebaseCloudStorage {
 
   final _notesRef = FirebaseFirestore.instance.collection("notes");
 
-  void createNewNote({required String ownerUserId}) async {
-    await _notesRef.add({
+  Future<CloudNote> createNewNote({required String ownerUserId}) async {
+    final noteDocRef = await _notesRef.add({
       ownerFieldName: ownerUserId,
       contentFieldName: "",
     });
+
+    final note = await noteDocRef.get();
+
+    return CloudNote(
+      ownerUserId: ownerUserId,
+      documentId: note.id,
+      content: "",
+    );
   }
 
   Future<void> updateNote({
