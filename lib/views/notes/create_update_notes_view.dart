@@ -4,6 +4,8 @@ import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/services/cloud/cloud_note_entity.dart';
 import 'package:notes_app/services/cloud/cloud_storage_service.dart';
 import 'package:notes_app/services/local/local_note_entity.dart';
+import 'package:notes_app/utils/dialogs/cannot_share_empty_note_dialog.dart';
+import 'package:share_plus/share_plus.dart';
 
 class CreateUpdateNotesView extends StatefulWidget {
   const CreateUpdateNotesView({Key? key}) : super(key: key);
@@ -96,6 +98,19 @@ class _CreateUpdateNotesViewState extends State<CreateUpdateNotesView> {
       appBar: AppBar(
         title: Text((noteArg == null) ? "New Note" : "Update Note"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final text = _noteController.text;
+              if(_note == null || text.isEmpty) {
+                await showCannotShareEmptyNoteDialog(context);
+                return;
+              }
+              Share.share(text);
+            },
+            icon: const Icon(Icons.share),
+          )
+        ],
       ),
       body: FutureBuilder(
         future: _createOrGetExistingNote(context),
