@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/constants/routes.dart';
 import 'package:notes_app/services/auth/auth_exceptions.dart';
 import 'package:notes_app/services/auth/auth_service.dart';
+import 'package:notes_app/services/auth/bloc/auth_bloc.dart';
+import 'package:notes_app/services/auth/bloc/auth_event.dart';
 import '../utils/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -65,7 +68,9 @@ class _LoginViewState extends State<LoginView> {
                 onPressed: () {
                   final email = _emailTextController.text;
                   final password = _passwordTextController.text;
-                  _loginUser(context, email, password);
+                  context.read<AuthBloc>().add(
+                    AuthEventLogIn(email, password)
+                  );
                 },
                 child: const Text("Login")),
             Row(
