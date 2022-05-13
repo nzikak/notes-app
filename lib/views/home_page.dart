@@ -7,6 +7,7 @@ import 'package:notes_app/services/auth/bloc/auth_event.dart';
 import 'package:notes_app/services/auth/bloc/auth_state.dart';
 import 'package:notes_app/views/login_view.dart';
 import 'package:notes_app/views/notes/note_view.dart';
+import 'package:notes_app/views/register_view.dart';
 import 'package:notes_app/views/verify_email_view.dart';
 
 
@@ -24,6 +25,9 @@ class HomePage extends StatelessWidget {
       }
       else if (state is AuthStateLoggedOut) {
         return const LoginView();
+      }
+      else if (state is AuthStateRegistering) {
+        return const RegisterView();
       }
       else {
         return const Scaffold(

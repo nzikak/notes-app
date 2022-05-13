@@ -26,19 +26,6 @@ void main() async {
       primarySwatch: Colors.blue,
     ),
     routes: {
-      homeRoute: (context) {
-        return const HomePage();
-      },
-      loginRoute: (context) {
-        return const LoginView();
-      },
-      registerRoute: (context) {
-        return const RegisterView();
-      },
-      verifyEmailRoute: (context) {
-        return const VerifyEmail();
-      },
-      notesRoute: (context) => const NotesView(),
       createUpdateNoteRoute: (context) => const CreateUpdateNotesView()
     },
   ));

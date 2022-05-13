@@ -44,7 +44,9 @@ class _VerifyEmailState extends State<VerifyEmail> {
               width: 250,
               child: ElevatedButton(
                   onPressed: () {
-                    _sendEmailVerification();
+                    context
+                        .read<AuthBloc>()
+                        .add(const AuthEventSendVerificationEmail());
                   },
                   child: const Text(
                     "Send Email Verification",
@@ -55,8 +57,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
               width: 250,
               child: ElevatedButton(
                   onPressed: () {
-                    context.read<AuthBloc>()
-                        .add(const AuthEventLogOut());
+                    context.read<AuthBloc>().add(const AuthEventLogOut());
                   },
                   child: const Text(
                     "Sign Out",
@@ -69,7 +70,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
     );
   }
 
-  void _sendEmailVerification() async {
-    await AuthService.firebase().sendEmailVerification();
-  }
+// void _sendEmailVerification() async {
+//   await AuthService.firebase().sendEmailVerification();
+// }
 }
