@@ -9,7 +9,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await provider.initializeFirebase();
       final user = provider.currentUser;
       if (user == null) {
-        emit(const AuthStateLoggedOut());
+        emit(const AuthStateLoggedOut(null));
       } else if (!user.isEmailVerified) {
         emit(const AuthStateNotVerified());
       } else {
@@ -18,14 +18,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
 
     on<AuthEventLogIn>((event, emit) async {
-      emit(const AuthStateLoading());
+      //emit(const AuthStateLoading());
       final email = event.email;
       final password = event.password;
       try {
         final user = await provider.loginUser(email: email, password: password);
         emit(AuthStateLoggedIn(user));
       } on Exception catch (e) {
-        emit(AuthStateLoginFailed(e));
+        emit(AuthStateLoggedOut(e));
       }
     });
 
@@ -33,7 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthStateLoading());
       try {
         await provider.logOutUser();
-        emit(const AuthStateLoggedOut());
+        emit(const AuthStateLoggedOut(null));
       } on Exception catch (e) {
         emit(AuthStateLogoutFailed(e));
       }

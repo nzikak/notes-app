@@ -5,6 +5,7 @@ import 'package:notes_app/services/auth/auth_exceptions.dart';
 import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/services/auth/bloc/auth_bloc.dart';
 import 'package:notes_app/services/auth/bloc/auth_event.dart';
+import 'package:notes_app/services/auth/bloc/auth_state.dart';
 import '../utils/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -64,15 +65,28 @@ class _LoginViewState extends State<LoginView> {
               //      keyboardType: TextInputType.,
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-                onPressed: () {
-                  final email = _emailTextController.text;
-                  final password = _passwordTextController.text;
-                  context.read<AuthBloc>().add(
-                    AuthEventLogIn(email, password)
-                  );
-                },
-                child: const Text("Login")),
+            BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) async {
+                if (state is AuthStateLoggedOut) {
+                  if (state.exception is UserNotFoundAuthException) {
+                    await showErrorDialog(context, "User does not exist");
+                  } else if (state.exception is WrongPasswordAuthException) {
+                    await showErrorDialog(context, "Incorrect password");
+                  } else if (state.exception is GenericAuthException) {
+                    await showErrorDialog(context, "Authentication error");
+                  }
+                }
+              },
+              child: ElevatedButton(
+                  onPressed: () {
+                    final email = _emailTextController.text;
+                    final password = _passwordTextController.text;
+                    context
+                        .read<AuthBloc>()
+                        .add(AuthEventLogIn(email, password));
+                  },
+                  child: const Text("Login")),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
