@@ -57,7 +57,6 @@ class _RegisterViewState extends State<RegisterView> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
-          elevation: 0.0,
         ),
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -67,6 +66,7 @@ class _RegisterViewState extends State<RegisterView> {
                 maxLines: 1,
                 controller: _emailTextController,
                 keyboardType: TextInputType.emailAddress,
+                autofocus: true,
                 decoration: const InputDecoration(hintText: "Email"),
               ),
               const SizedBox(height: 10),

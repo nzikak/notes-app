@@ -8,6 +8,48 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       : super(
           const AuthStateNotInitialized(isLoading: true),
         ) {
+    //Navigate to Register
+    on<AuthEventNavigateToRegister>((event, emit) {
+      emit(const AuthStateRegistering(
+        exception: null,
+        isLoading: false,
+      ));
+    });
+
+    //ResetPassword
+    on<AuthEventForgotPassword>((event, emit) async {
+      emit(const AuthStateForgotPassword(
+        exception: null,
+        isEmailSent: false,
+        isLoading: false,
+      ));
+      final email = event.email;
+      if (email == null) {
+        return;
+      }
+      emit(const AuthStateForgotPassword(
+        exception: null,
+        isEmailSent: false,
+        isLoading: true,
+      ));
+      Exception? exception;
+      bool isMailSent;
+      try {
+        await provider.sendPasswordResetMail(email);
+        exception = null;
+        isMailSent = true;
+      } on Exception catch (e) {
+        exception = e;
+        isMailSent = false;
+      }
+
+      emit(AuthStateForgotPassword(
+        exception: exception,
+        isEmailSent: isMailSent,
+        isLoading: false,
+      ));
+    });
+
     //Register event
     on<AuthEventRegister>((event, emit) async {
       emit(const AuthStateRegistering(exception: null, isLoading: true));
@@ -107,5 +149,4 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
   }
-
 }

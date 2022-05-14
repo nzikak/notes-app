@@ -52,12 +52,18 @@ class _LoginViewState extends State<LoginView> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
-          elevation: 0.0,
         ),
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              const Text(
+                "Please login to your account in order to view "
+                    "and create notes.",
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
               TextField(
                 maxLines: 1,
                 controller: _emailTextController,
@@ -84,6 +90,16 @@ class _LoginViewState extends State<LoginView> {
                         .add(AuthEventLogIn(email, password));
                   },
                   child: const Text("Login")),
+              TextButton(
+                  onPressed: () {
+                    context
+                        .read<AuthBloc>()
+                        .add(const AuthEventForgotPassword());
+                  },
+                  child: const Text(
+                    "Forgot Password",
+                    style: TextStyle(fontSize: 16),
+                  )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

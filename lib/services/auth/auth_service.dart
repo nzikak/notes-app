@@ -36,4 +36,8 @@ class AuthService implements AuthProvider {
 
   @override
   Future<void> initializeFirebase() => provider.initializeFirebase();
+
+  @override
+  Future<void> sendPasswordResetMail(String email) =>
+      provider.sendPasswordResetMail(email);
 }

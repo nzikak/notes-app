@@ -70,4 +70,10 @@ class TestAuthProvider implements AuthProvider {
       id: "userId",
     );
   }
+
+  @override
+  Future<void> sendPasswordResetMail(String email) async {
+    if (!isInitialized) throw NotInitializedException();
+
+  }
 }

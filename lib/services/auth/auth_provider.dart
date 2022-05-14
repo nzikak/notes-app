@@ -18,4 +18,6 @@ abstract class AuthProvider {
   Future<void> sendEmailVerification();
 
   Future<void> initializeFirebase();
+
+  Future<void> sendPasswordResetMail(String email);
 }
