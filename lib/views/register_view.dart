@@ -58,58 +58,60 @@ class _RegisterViewState extends State<RegisterView> {
           ),
           centerTitle: true,
         ),
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-          child: Column(
-            children: [
-              TextField(
-                maxLines: 1,
-                controller: _emailTextController,
-                keyboardType: TextInputType.emailAddress,
-                autofocus: true,
-                decoration: const InputDecoration(hintText: "Email"),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                maxLines: 1,
-                controller: _passwordTextController,
-                obscureText: true,
-                autocorrect: false,
-                enableSuggestions: false,
-                decoration: const InputDecoration(hintText: "Password"),
-                //      keyboardType: TextInputType.,
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                  onPressed: () {
-                    final email = _emailTextController.text;
-                    final password = _passwordTextController.text;
-                    context
-                        .read<AuthBloc>()
-                        .add(AuthEventRegister(email, password));
-                  },
-                  child: const Text("Register")),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Already registered?",
-                      style: TextStyle(fontSize: 16)),
-                  const SizedBox(width: 5),
-                  TextButton(
-                      onPressed: () {
-                        context
-                            .read<AuthBloc>()
-                            .add(
-                              const AuthEventLogOut(),
-                            );
-                      },
-                      child: const Text(
-                        "Sign In",
-                        style: TextStyle(fontSize: 16),
-                      ))
-                ],
-              )
-            ],
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Column(
+              children: [
+                TextField(
+                  maxLines: 1,
+                  controller: _emailTextController,
+                  keyboardType: TextInputType.emailAddress,
+                  autofocus: true,
+                  decoration: const InputDecoration(hintText: "Email"),
+                ),
+                const SizedBox(height: 10),
+                TextField(
+                  maxLines: 1,
+                  controller: _passwordTextController,
+                  obscureText: true,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  decoration: const InputDecoration(hintText: "Password"),
+                  //      keyboardType: TextInputType.,
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                    onPressed: () {
+                      final email = _emailTextController.text;
+                      final password = _passwordTextController.text;
+                      context
+                          .read<AuthBloc>()
+                          .add(AuthEventRegister(email, password));
+                    },
+                    child: const Text("Register")),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Already registered?",
+                        style: TextStyle(fontSize: 16)),
+                    const SizedBox(width: 5),
+                    TextButton(
+                        onPressed: () {
+                          context
+                              .read<AuthBloc>()
+                              .add(
+                                const AuthEventLogOut(),
+                              );
+                        },
+                        child: const Text(
+                          "Sign In",
+                          style: TextStyle(fontSize: 16),
+                        ))
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),

@@ -56,49 +56,51 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           title: const Text("Forgot Password"),
           centerTitle: true,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                "Please enter your email below to reset your password",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16.0),
-              ),
-              const SizedBox(height: 16.0),
-              Container(
-                alignment: Alignment.center,
-                height: 50.0,
-                child: TextField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0)),
-                      hintText: "Your email address..."),
-                  keyboardType: TextInputType.emailAddress,
-                  autofocus: true,
-                  autocorrect: false,
-                  controller: _controller,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  "Please enter your email below to reset your password",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16.0),
                 ),
-              ),
-              const SizedBox(height: 10.0),
-              ElevatedButton(
-                onPressed: () {
-                  final email = _controller.text;
-                  context
-                      .read<AuthBloc>()
-                      .add(AuthEventForgotPassword(email: email));
-                },
-                child: const Text("Send Password reset link"),
-              ),
-              const SizedBox(height: 8.0),
-              TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(const AuthEventLogOut());
-                },
-                child: const Text("Back to Login"),
-              ),
-            ],
+                const SizedBox(height: 16.0),
+                Container(
+                  alignment: Alignment.center,
+                  height: 50.0,
+                  child: TextField(
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0)),
+                        hintText: "Your email address..."),
+                    keyboardType: TextInputType.emailAddress,
+                    autofocus: true,
+                    autocorrect: false,
+                    controller: _controller,
+                  ),
+                ),
+                const SizedBox(height: 10.0),
+                ElevatedButton(
+                  onPressed: () {
+                    final email = _controller.text;
+                    context
+                        .read<AuthBloc>()
+                        .add(AuthEventForgotPassword(email: email));
+                  },
+                  child: const Text("Send Password reset link"),
+                ),
+                const SizedBox(height: 8.0),
+                TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(const AuthEventLogOut());
+                  },
+                  child: const Text("Back to Login"),
+                ),
+              ],
+            ),
           ),
         ),
       ),
