@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notes_app/constants/routes.dart';
 import 'package:notes_app/services/auth/auth_exceptions.dart';
-import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/services/auth/bloc/auth_bloc.dart';
 import 'package:notes_app/services/auth/bloc/auth_event.dart';
 import 'package:notes_app/services/auth/bloc/auth_state.dart';
-
+import 'package:notes_app/extensions/build_context/localization.dart';
 import '../utils/dialogs/error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -40,21 +38,31 @@ class _RegisterViewState extends State<RegisterView> {
       listener: (context, state) async {
         if (state is AuthStateRegistering) {
           if (state.exception is WeakPasswordAuthException) {
-            await showErrorDialog(context, "Weak password");
+            await showErrorDialog(
+              context,
+              context.loc.register_error_weak_password,
+            );
           } else if (state.exception is EmailAlreadyInUseAuthException) {
-            await showErrorDialog(context, "Account already exists");
+            await showErrorDialog(
+                context, context.loc.register_error_email_already_in_use);
           } else if (state.exception is InvalidEmailAuthException) {
-            await showErrorDialog(context, "Invalid email");
+            await showErrorDialog(
+              context,
+              context.loc.register_error_invalid_email,
+            );
           } else if (state.exception is GenericAuthException) {
-            await showErrorDialog(context, "Registration error");
+            await showErrorDialog(
+              context,
+              context.loc.register_error_generic,
+            );
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            "Create Account",
-            style: TextStyle(fontWeight: FontWeight.bold),
+          title: Text(
+            context.loc.register,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
         ),
@@ -68,7 +76,9 @@ class _RegisterViewState extends State<RegisterView> {
                   controller: _emailTextController,
                   keyboardType: TextInputType.emailAddress,
                   autofocus: true,
-                  decoration: const InputDecoration(hintText: "Email"),
+                  decoration: InputDecoration(
+                    hintText: context.loc.email_text_field_placeholder,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 TextField(
@@ -77,7 +87,9 @@ class _RegisterViewState extends State<RegisterView> {
                   obscureText: true,
                   autocorrect: false,
                   enableSuggestions: false,
-                  decoration: const InputDecoration(hintText: "Password"),
+                  decoration: InputDecoration(
+                    hintText: context.loc.password_text_field_placeholder,
+                  ),
                   //      keyboardType: TextInputType.,
                 ),
                 const SizedBox(height: 10),
@@ -89,27 +101,19 @@ class _RegisterViewState extends State<RegisterView> {
                           .read<AuthBloc>()
                           .add(AuthEventRegister(email, password));
                     },
-                    child: const Text("Register")),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Already registered?",
-                        style: TextStyle(fontSize: 16)),
-                    const SizedBox(width: 5),
+                    child: Text(context.loc.register)),
+
                     TextButton(
                         onPressed: () {
-                          context
-                              .read<AuthBloc>()
-                              .add(
+                          context.read<AuthBloc>().add(
                                 const AuthEventLogOut(),
                               );
                         },
-                        child: const Text(
-                          "Sign In",
-                          style: TextStyle(fontSize: 16),
+                        child: Text(
+                          context.loc.register_view_already_registered,
+                          style: const TextStyle(fontSize: 16),
                         ))
-                  ],
-                )
+
               ],
             ),
           ),

@@ -6,6 +6,7 @@ import 'package:notes_app/services/cloud/cloud_storage_service.dart';
 import 'package:notes_app/services/local/local_note_entity.dart';
 import 'package:notes_app/utils/dialogs/cannot_share_empty_note_dialog.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:notes_app/extensions/build_context/localization.dart';
 
 class CreateUpdateNotesView extends StatefulWidget {
   const CreateUpdateNotesView({Key? key}) : super(key: key);
@@ -124,9 +125,9 @@ class _CreateUpdateNotesViewState extends State<CreateUpdateNotesView> {
                   controller: _noteController,
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
-                  decoration: const InputDecoration(
-                      hintText: "Enter your note here...",
-                      border: OutlineInputBorder()),
+                  decoration: InputDecoration(
+                      hintText: context.loc.start_typing_your_note,
+                      border: const OutlineInputBorder()),
                 ),
               );
             default:

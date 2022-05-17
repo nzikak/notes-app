@@ -5,6 +5,7 @@ import 'package:notes_app/services/auth/bloc/auth_bloc.dart';
 import 'package:notes_app/services/auth/bloc/auth_event.dart';
 import 'package:notes_app/services/auth/bloc/auth_state.dart';
 import '../utils/dialogs/error_dialog.dart';
+import 'package:notes_app/extensions/build_context/localization.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key? key}) : super(key: key);
@@ -37,19 +38,19 @@ class _LoginViewState extends State<LoginView> {
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
           if (state.exception is UserNotFoundAuthException) {
-            await showErrorDialog(context, "User does not exist");
+            await showErrorDialog(context, context.loc.login_error_cannot_find_user,);
           } else if (state.exception is WrongPasswordAuthException) {
-            await showErrorDialog(context, "Incorrect password");
+            await showErrorDialog(context, context.loc.login_error_wrong_credentials);
           } else if (state.exception is GenericAuthException) {
-            await showErrorDialog(context, "Authentication error");
+            await showErrorDialog(context, context.loc.login_error_auth_error);
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            "Login",
-            style: TextStyle(fontWeight: FontWeight.bold),
+          title: Text(
+            context.loc.login,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
         ),
@@ -58,10 +59,9 @@ class _LoginViewState extends State<LoginView> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                const Text(
-                  "Please login to your account in order to view "
-                      "and create notes.",
-                  style: TextStyle(
+                Text(
+                  context.loc.login_view_prompt,
+                  style: const TextStyle(
                     fontSize: 16.0,
                   ),
                 ),
@@ -69,7 +69,7 @@ class _LoginViewState extends State<LoginView> {
                   maxLines: 1,
                   controller: _emailTextController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(hintText: "Email"),
+                  decoration: InputDecoration(hintText: context.loc.email_text_field_placeholder),
                 ),
                 const SizedBox(height: 10),
                 TextField(
@@ -78,7 +78,7 @@ class _LoginViewState extends State<LoginView> {
                   obscureText: true,
                   autocorrect: false,
                   enableSuggestions: false,
-                  decoration: const InputDecoration(hintText: "Password"),
+                  decoration: InputDecoration(hintText: context.loc.password_text_field_placeholder),
                   //      keyboardType: TextInputType.,
                 ),
                 const SizedBox(height: 10),
@@ -90,35 +90,28 @@ class _LoginViewState extends State<LoginView> {
                           .read<AuthBloc>()
                           .add(AuthEventLogIn(email, password));
                     },
-                    child: const Text("Login")),
+                    child: Text(context.loc.login)),
                 TextButton(
                     onPressed: () {
                       context
                           .read<AuthBloc>()
                           .add(const AuthEventForgotPassword());
                     },
-                    child: const Text(
-                      "Forgot Password",
-                      style: TextStyle(fontSize: 16),
+                    child: Text(
+                      context.loc.login_view_forgot_password,
+                      style: const TextStyle(fontSize: 16),
                     )),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Not yet registered?",
-                        style: TextStyle(fontSize: 16)),
-                    const SizedBox(width: 5),
+
                     TextButton(
                         onPressed: () {
                           context
                               .read<AuthBloc>()
                               .add(const AuthEventNavigateToRegister());
                         },
-                        child: const Text(
-                          "Register here",
-                          style: TextStyle(fontSize: 16),
+                        child: Text(
+                          context.loc.login_view_not_registered_yet,
+                          style: const TextStyle(fontSize: 16),
                         ))
-                  ],
-                )
               ],
             ),
           ),

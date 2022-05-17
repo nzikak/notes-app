@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/constants/routes.dart';
+import 'package:notes_app/extensions/build_context/localization.dart';
+import 'package:notes_app/extensions/stream/count.dart';
 import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/services/auth/bloc/auth_bloc.dart';
 import 'package:notes_app/services/auth/bloc/auth_event.dart';
 import 'package:notes_app/services/cloud/cloud_note_entity.dart';
 import 'package:notes_app/services/cloud/cloud_storage_service.dart';
-import 'package:notes_app/utils/sign_out_user.dart';
 import 'package:notes_app/views/notes/notes_list_view.dart';
 import '../../enums/menu_action.dart';
 import '../../utils/dialogs/sign_out_dialog.dart';
@@ -33,10 +34,22 @@ class _NotesViewState extends State<NotesView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Your Notes",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: StreamBuilder<int>(
+            stream: _noteService.allNotes(ownerUserId: _userId).getLength,
+            builder: (context, AsyncSnapshot<int> snapshot) {
+              if (snapshot.hasData) {
+                final count = snapshot.data ?? 0;
+                return Text(
+                  context.loc.notes_title(count),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                );
+              } else {
+                return const Text(
+                  "Your Notes",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                );
+              }
+            }),
         actions: [
           IconButton(
             onPressed: () {
@@ -46,8 +59,11 @@ class _NotesViewState extends State<NotesView> {
           ),
           PopupMenuButton<MenuAction>(
             itemBuilder: (context) {
-              return const [
-                PopupMenuItem(value: MenuAction.logout, child: Text("Sign out"))
+              return [
+                PopupMenuItem(
+                  value: MenuAction.logout,
+                  child: Text(context.loc.logout),
+                )
               ];
             },
             onSelected: (value) async {
@@ -55,8 +71,7 @@ class _NotesViewState extends State<NotesView> {
                 case MenuAction.logout:
                   final shouldLogout = await showLogoutDialog(context);
                   if (shouldLogout) {
-                    context.read<AuthBloc>()
-                        .add(const AuthEventLogOut());
+                    context.read<AuthBloc>().add(const AuthEventLogOut());
                   }
                   break;
               }

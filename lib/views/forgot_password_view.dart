@@ -5,7 +5,7 @@ import 'package:notes_app/services/auth/bloc/auth_event.dart';
 import 'package:notes_app/services/auth/bloc/auth_state.dart';
 import 'package:notes_app/utils/dialogs/error_dialog.dart';
 import 'package:notes_app/utils/dialogs/password_reset_email_sent_dialog.dart';
-
+import 'package:notes_app/extensions/build_context/localization.dart';
 import '../services/auth/bloc/auth_bloc.dart';
 
 class ForgotPasswordView extends StatefulWidget {
@@ -41,19 +41,27 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           }
           if (state.exception != null) {
             if (state.exception is InvalidEmailAuthException) {
-              await showErrorDialog(context, "Invalid email");
+              await showErrorDialog(
+                context,
+                context.loc.register_error_invalid_email,
+              );
             } else if (state.exception is UserNotFoundAuthException) {
-              await showErrorDialog(context, "User does not exist");
+              await showErrorDialog(
+                context,
+                context.loc.login_error_cannot_find_user,
+              );
             } else {
               await showErrorDialog(
-                  context, "Could not send password reset email");
+                context,
+                context.loc.forgot_password_view_generic_error,
+              );
             }
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Forgot Password"),
+          title: Text(context.loc.forgot_password),
           centerTitle: true,
         ),
         body: SingleChildScrollView(
@@ -62,10 +70,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  "Please enter your email below to reset your password",
+                Text(
+                  context.loc.forgot_password_view_prompt,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16.0),
+                  style: const TextStyle(fontSize: 16.0),
                 ),
                 const SizedBox(height: 16.0),
                 Container(
@@ -75,7 +83,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0)),
-                        hintText: "Your email address..."),
+                        hintText: context.loc.email_text_field_placeholder),
                     keyboardType: TextInputType.emailAddress,
                     autofocus: true,
                     autocorrect: false,
@@ -90,14 +98,14 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                         .read<AuthBloc>()
                         .add(AuthEventForgotPassword(email: email));
                   },
-                  child: const Text("Send Password reset link"),
+                  child: Text(context.loc.forgot_password_view_send_me_link),
                 ),
                 const SizedBox(height: 8.0),
                 TextButton(
                   onPressed: () {
                     context.read<AuthBloc>().add(const AuthEventLogOut());
                   },
-                  child: const Text("Back to Login"),
+                  child: Text(context.loc.forgot_password_view_back_to_login),
                 ),
               ],
             ),

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notes_app/constants/routes.dart';
-import 'package:notes_app/services/auth/auth_service.dart';
 import 'package:notes_app/services/auth/bloc/auth_bloc.dart';
 import 'package:notes_app/services/auth/bloc/auth_event.dart';
-import 'package:notes_app/utils/sign_out_user.dart';
+import 'package:notes_app/extensions/build_context/localization.dart';
 
 class VerifyEmail extends StatefulWidget {
   const VerifyEmail({Key? key}) : super(key: key);
@@ -18,7 +16,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Verify Email"),
+        title: Text(context.loc.verify_email),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -27,17 +25,9 @@ class _VerifyEmailState extends State<VerifyEmail> {
           padding: const EdgeInsets.only(top: 100, left: 16, right: 16),
           child: Column(
             children: [
-              const Text(
-                "We've sent you a verification email. "
-                "Please, check your mail to verify your account.",
-                style: TextStyle(fontSize: 18),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                "If you haven't received a verification email yet, "
-                "click on the button below to resend it.",
-                style: TextStyle(fontSize: 18),
+              Text(
+              context.loc.verify_email_view_prompt,
+                style: const TextStyle(fontSize: 18),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
@@ -49,9 +39,9 @@ class _VerifyEmailState extends State<VerifyEmail> {
                           .read<AuthBloc>()
                           .add(const AuthEventSendVerificationEmail());
                     },
-                    child: const Text(
-                      "Send Email Verification",
-                      style: TextStyle(fontSize: 18),
+                    child: Text(
+                     context.loc.verify_email_send_email_verification,
+                      style: const TextStyle(fontSize: 18),
                     )),
               ),
               SizedBox(
@@ -60,9 +50,9 @@ class _VerifyEmailState extends State<VerifyEmail> {
                     onPressed: () {
                       context.read<AuthBloc>().add(const AuthEventLogOut());
                     },
-                    child: const Text(
-                      "Sign Out",
-                      style: TextStyle(fontSize: 18),
+                    child: Text(
+                      context.loc.logout,
+                      style: const TextStyle(fontSize: 18),
                     )),
               ),
             ],
